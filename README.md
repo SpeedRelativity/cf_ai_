@@ -1,5 +1,8 @@
 # CLOUDFLARE INTERNSHIP PROJECT
 
+VISIT THE LIVE APP HERE!
+https://agents-starter.nkhatrichatri.workers.dev/
+
 Documenting everything I've done here and how it works.
 
 ## Project Overview
@@ -126,6 +129,10 @@ const model = workersai(modelName);
 3. Run development server: `npm run dev`
 4. Access the application at `http://localhost:5173`
 5. Deploy to production: `npm run deploy`
+
+OR VISIT https://agents-starter.nkhatrichatri.workers.dev/
+
+I DEPLOYED IT :D
 
 ## Resources Used
 
