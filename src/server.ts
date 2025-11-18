@@ -13,17 +13,9 @@ import {
   createUIMessageStreamResponse,
   type ToolSet
 } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { createWorkersAI } from "workers-ai-provider";
 import { processToolCalls, cleanupMessages } from "./utils";
 import { tools, executions } from "./tools";
-// import { env } from "cloudflare:workers";
-
-const model = openai("gpt-4o-2024-11-20");
-// Cloudflare AI Gateway
-// const openai = createOpenAI({
-//   apiKey: env.OPENAI_API_KEY,
-//   baseURL: env.GATEWAY_BASE_URL,
-// });
 
 /**
  * Chat Agent implementation that handles real-time AI chat interactions
@@ -39,6 +31,10 @@ export class Chat extends AIChatAgent<Env> {
     // const mcpConnection = await this.mcp.connect(
     //   "https://path-to-mcp-server/sse"
     // );
+
+    // Create Workers AI provider using the AI binding
+    const workersai = createWorkersAI({ binding: this.env.AI });
+    const model = workersai("@cf/meta/llama-3.3-70b-instruct-fp8-fast" as any);
 
     // Collect all tools, including MCP tools
     const allTools = {
@@ -113,15 +109,12 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === "/check-open-ai-key") {
-      const hasOpenAIKey = !!process.env.OPENAI_API_KEY;
+      // Workers AI is always available via binding - no API key needed
       return Response.json({
-        success: hasOpenAIKey
+        success: true,
+        provider: "Workers AI",
+        model: "llama-3.3-70b-instruct-fp8-fast"
       });
-    }
-    if (!process.env.OPENAI_API_KEY) {
-      console.error(
-        "OPENAI_API_KEY is not set, don't forget to set it locally in .dev.vars, and use `wrangler secret bulk .dev.vars` to upload it to production"
-      );
     }
     return (
       // Route the request to our agent or return 404 if not found

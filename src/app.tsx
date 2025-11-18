@@ -413,14 +413,14 @@ export default function Chat() {
   );
 }
 
-const hasOpenAiKeyPromise = fetch("/check-open-ai-key").then((res) =>
-  res.json<{ success: boolean }>()
+const hasAIReadyPromise = fetch("/check-open-ai-key").then((res) =>
+  res.json<{ success: boolean; provider?: string; model?: string }>()
 );
 
 function HasOpenAIKey() {
-  const hasOpenAiKey = use(hasOpenAiKeyPromise);
+  const aiStatus = use(hasAIReadyPromise);
 
-  if (!hasOpenAiKey.success) {
+  if (!aiStatus.success) {
     return (
       <div className="fixed top-0 left-0 right-0 z-50 bg-red-500/10 backdrop-blur-sm">
         <div className="max-w-3xl mx-auto p-4">
@@ -446,36 +446,22 @@ function HasOpenAIKey() {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
-                  OpenAI API Key Not Configured
+                  AI Service Not Available
                 </h3>
                 <p className="text-neutral-600 dark:text-neutral-300 mb-1">
-                  Requests to the API, including from the frontend UI, will not
-                  work until an OpenAI API key is configured.
+                  The AI service is not properly configured. Please check your Workers AI binding.
                 </p>
                 <p className="text-neutral-600 dark:text-neutral-300">
-                  Please configure an OpenAI API key by setting a{" "}
+                  Learn more about{" "}
                   <a
-                    href="https://developers.cloudflare.com/workers/configuration/secrets/"
+                    href="https://developers.cloudflare.com/workers-ai/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-red-600 dark:text-red-400"
                   >
-                    secret
-                  </a>{" "}
-                  named{" "}
-                  <code className="bg-red-100 dark:bg-red-900/30 px-1.5 py-0.5 rounded text-red-600 dark:text-red-400 font-mono text-sm">
-                    OPENAI_API_KEY
-                  </code>
-                  . <br />
-                  You can also use a different model provider by following these{" "}
-                  <a
-                    href="https://github.com/cloudflare/agents-starter?tab=readme-ov-file#use-a-different-ai-model-provider"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-red-600 dark:text-red-400"
-                  >
-                    instructions.
+                    Workers AI configuration
                   </a>
+                  .
                 </p>
               </div>
             </div>
